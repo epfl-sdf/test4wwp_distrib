@@ -16,7 +16,7 @@ try:
     credentials.close()
 
     # Insert users
-    users = open('users.csv')
+    users = open('../credentials/users.csv')
     reader = csv.reader(users)
     output.write("CREATE TABLE users (ID SERIAL PRIMARY KEY NOT NULL, NAME TEXT);")
     i = 0
