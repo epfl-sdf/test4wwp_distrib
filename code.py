@@ -3,6 +3,7 @@ from web import form
 import time
 from random import randint
 import datetime
+import httpagentparser
 
 render = web.template.render('Templates/')
 
@@ -45,9 +46,10 @@ class compare:
         if url1 and url2:
             return render.compare(names, user_id, status, url1, url2)
         else:
-            urls = db.query('SELECT JAHIA, WORDPRESS FROM sites WHERE STATUS="BUSY" AND USER_ID="' + user_id + '";').list()
-     	    if not urls:
-		        urls = db.query('SELECT JAHIA, WORDPRESS FROM sites WHERE STATUS IS NULL;').list()
+			browser_info =  httpagentparser.detect(web.ctx.env.get('HTTP_USER_AGENT'))
+			urls = db.query('SELECT s.jahia, s.wordpress FROM logs l INNER JOIN browsers b ON l.browser_id = b.id INNER JOIN websites s ON l.website_id = s.id WHERE l.user_id = ' + user_id + ' AND b.name = ' + browser_info['browser']['name'] + ' AND b.os = ' + browser_info['platform']['name'] + ' AND l.status = "BUSY" ORDER BY date(date) DESC Limit 1;').list()
+			if not urls:
+				urls = db.query('SELECT JAHIA, WORDPRESS FROM sites WHERE STATUS IS NULL;').list()
         if not urls:
             return "No more sites to compare"
         rdm_id = randint(0, len(urls)-1)
