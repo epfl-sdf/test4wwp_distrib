@@ -42,4 +42,10 @@ con.commit()
 users.close()
 print('Users OK')
 
+# Create browers_sites
+cur.execute(('INSERT INTO browsers_sites (browser_id, website_id)'
+            +'SELECT browsers.id , websites.id FROM browsers CROSS JOIN websites;' 
+            ))
+con.commit()
+
 con.close()
