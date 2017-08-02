@@ -34,13 +34,6 @@ CREATE TABLE "browsers"(
   CONSTRAINT "id_UNIQUE"
     UNIQUE("id")
 );
-CREATE TABLE "browsers_sites"(
-  "browser_id" INTEGER NOT NULL,
-  "website_id" INTEGER NOT NULL,
-  PRIMARY KEY("browser_id","website_id"),
-  FOREIGN KEY("browser_id") REFERENCES "browsers"("id"),
-  FOREIGN KEY("website_id") REFERENCES "websites"("id")
-);
 CREATE TABLE "assigned_websites"(
   "user_id" INTEGER NOT NULL,
   "browser_id" INTEGER NOT NULL,
