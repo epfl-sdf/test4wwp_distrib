@@ -3,11 +3,11 @@ Distributeur de t√¢ches pour la comparaison visuelle de deux pages WEB pour le p
 
 Pages disponibles: 
 
-	/ - Page d'accueil.
+"/" - Page d'accueil.
 
-	/logs - Affiche l'historique des visites et comparaisons.
+"/logs" - Affiche l'historique des visites et comparaisons.
 
-	/compare - Permet de comparer deux urls pass√es en argument dans url1 et url2. Il est conseill√© de ne pas l'utiliser avec l'argument id autre qu'en suivant les boutons disponibles.
+"/compare" - Permet de comparer deux urls pass√es en argument dans url1 et url2. Il est conseill√© de ne pas l'utiliser avec l'argument id autre qu'en suivant les boutons disponibles.
 
 ### Installation:
 **``./install.sh``**
