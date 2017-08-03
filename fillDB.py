@@ -21,17 +21,6 @@ con.commit()
 credentials.close()
 print('Websites (Credentials) OK')
 
-# Inset browsers
-browsers = open(path + 'browsers.csv')
-reader = csv.reader(browsers)
-# It has already an ID
-next(browsers)
-for row in reader:
-    cur.execute('INSERT INTO browsers VALUES (' + row[0] + ', "' + row[1] + '", "' + row[2] + '", "' + row[3] + '");')
-con.commit()
-browsers.close()
-print('Browsers OK')
-
 # Insert Users
 users = open(path + 'users.csv')
 reader = csv.reader(users)

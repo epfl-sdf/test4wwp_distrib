@@ -9,7 +9,7 @@ render = web.template.render('Templates/')
 
 urls = (
 	'/', 'index',
-	'/sites', 'sites',
+	'/logs', 'logs',
 	'/compare', 'compare',
 	'/next', 'next'
 )
@@ -83,13 +83,13 @@ class index:
     def GET(self):
         return render.index(names)
 
-class sites:
+class logs:
 	def GET(self):
-		sites = db.query("SELECT * FROM sites;").list()
-		for site in sites:
-			if site.DATE:
-				site.DATE =datetime.datetime.fromtimestamp(int(site.DATE)).strftime('%Y-%m-%d %H:%M:%S')	
-		return render.sites(sites, names, status)
+		logs = db.query("SELECT s.jahia, s.wordpress, b.os, b.name, l.date, u.first_name, u.last_name, l.status FROM logs l INNER JOIN browsers b ON l.browser_id=b.id INNER JOIN users u ON l.user_id=u.id INNER JOIN websites s ON l.website_id=s.id;").list()
+		for log in logs:
+			if log.date:
+				log.date = datetime.datetime.fromtimestamp(int(log.date)).strftime('%Y-%m-%d %H:%M:%S')	
+		return render.logs(logs)
 
 class compare:
     def GET(self):
@@ -131,7 +131,6 @@ class next:
             url = web.input(url1=None).url1
             user_id = web.input(user_id=None).user_id
             if user_id != '0':
-                
                 query.add_log(user_id, browser_id, query.get_id_from_jahia_url(url), statu)
                 raise web.seeother('/compare?user_id=' + user_id)
             else:

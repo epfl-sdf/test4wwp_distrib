@@ -1,0 +1,62 @@
+$def with (logs)
+
+<head>
+<title>Liste des sites</title>
+
+<style>
+table {
+	font-family: helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+th, tr {
+	border: 1px solid #dddddd;
+	position: relative;
+    text-align: left;
+    padding: 8px;
+	overflow:auto;
+}
+td {
+	border-right: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+}
+tr:nth-child(odd) {
+	background:#eeeeee;
+}
+tbody {
+	overflow:auto;
+}
+
+</style>
+</head>
+<body>
+    <div id="table-wrapper">
+        <table>
+        	<thead>	
+        	    <tr>
+                    <th>JAHIA</th> 
+                    <th>WORDPRESS</th> 
+                    <th>STATUS</th> 
+                    <th>USER</th>
+					<th>OS</th>
+					<th>BROWSER</th> 
+                    <th>DATE</th>
+                </tr>
+        	</thead>
+        	<tbody>
+        	$for log in logs:
+        		<tr>
+                    <td><a href="$log.jahia">$log.jahia</a></td> 
+        		    <td><a href="$log.wordpress">$log.wordpress </a></td>
+                    <td>$log.status</td>
+                    <td>$log.first_name $log.last_name</td>
+					<td>$log.os</td>
+					<td>$log.name</td> 
+                    <td>$log.date</td>
+                </tr>
+        	</tbody>
+        </table>
+    </div>
+</body>
