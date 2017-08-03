@@ -85,7 +85,7 @@ class index:
 
 class logs:
 	def GET(self):
-		logs = db.query("SELECT s.jahia, s.wordpress, b.os, b.name, l.date, u.first_name, u.last_name, l.status FROM logs l INNER JOIN browsers b ON l.browser_id=b.id INNER JOIN users u ON l.user_id=u.id INNER JOIN websites s ON l.website_id=s.id;").list()
+		logs = db.query("SELECT s.jahia, s.wordpress, b.os, b.name, l.date, u.first_name, u.last_name, l.status FROM logs l INNER JOIN browsers b ON l.browser_id=b.id INNER JOIN users u ON l.user_id=u.id INNER JOIN websites s ON l.website_id=s.id ORDER BY l.date DESC;").list()
 		for log in logs:
 			if log.date:
 				log.date = datetime.datetime.fromtimestamp(int(log.date)).strftime('%Y-%m-%d %H:%M:%S')	
