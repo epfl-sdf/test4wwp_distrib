@@ -4,6 +4,12 @@ import time
 from random import randint
 import datetime
 
+print('\n')
+print('   ---------------------------')
+print('   | Distrib Version : 1.1.0 |')
+print('   ---------------------------')
+print('\n')
+
 render = web.template.render('Templates/')
 
 urls = (
