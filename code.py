@@ -5,6 +5,12 @@ from random import randint
 import datetime
 import httpagentparser
 
+print('\n')
+print('   ---------------------------')
+print('   | Distrib Version : 1.1.0 |')
+print('   ---------------------------')
+print('\n')
+
 render = web.template.render('Templates/')
 
 urls = (
