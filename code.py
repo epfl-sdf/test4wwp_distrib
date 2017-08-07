@@ -90,9 +90,9 @@ class query:
         else:
             return None
 	
-	@staticmethod
-	def update_assigned_websites(website_id, browser_id):
-		db.delete('assigned_websites', where='browser_id=' + browser_id + ' AND website_id=' + website_id )	
+    @staticmethod
+    def update_assigned_websites(website_id, browser_id):
+	db.delete('assigned_websites', where='browser_id=' + str(browser_id) + ' AND website_id=' + str(website_id) )	
 
     @staticmethod
     def add_browser(browser_info):
