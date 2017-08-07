@@ -7,7 +7,7 @@ import httpagentparser
 
 print('\n')
 print('   ---------------------------')
-print('   | Distrib Version : 1.1.0 |')
+print('   | Distrib Version : 1.1.1 |')
 print('   ---------------------------')
 print('\n')
 
