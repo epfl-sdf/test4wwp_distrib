@@ -26,33 +26,49 @@ button = form.Form(
 class query:
     @staticmethod
     def get_url(user_id, browser_info):
-        # search for 'started' site
-	urls = db.query(('SELECT s.id, s.jahia, s.wordpress, l.status '
-                        +'FROM logs l INNER JOIN browsers b ON l.browser_id = b.id '
-                        +'INNER JOIN websites s ON l.website_id = s.id '
-                        +'WHERE l.user_id = ' + user_id 
-                        +' AND b.name = "' + browser_info['browser']['name'] + '"' 
-                        +' AND b.os = "' + browser_info['platform']['name'] + '"'
-                        +'ORDER BY l.date DESC LIMIT 1;')).list()
-        # if 'started' site
-        if urls: 
-            if urls[0].status == 'STARTED':
-                return urls[0]
-            else:
-                urls = None
-        # if no 'started' site
-        if not urls:
-	    urls = db.query(('SELECT w.id, jahia, wordpress FROM '
-                            + '(logs INNER JOIN websites w ON NOT logs.website_id = w.id INNER JOIN browsers b)'
-                            + ' WHERE NOT (b.name = "' + browser_info['browser']['name'] + '"' 
-                            + ' AND b.os = "' + browser_info['platform']['name'] + '");')).list()
-        # if logs is empty
-        if not urls:
-            urls = db.query('SELECT id, jahia, wordpress FROM websites;').list()
-        rdm_id = randint(0, len(urls)-1)
-        url = urls[rdm_id]
-        url.status = None
-        return url
+        browser_id = query.get_browser_id(browser_info)
+        if browser_id and user_id:
+            url = None
+            urls = None
+            empty_logs = query.is_logs_empty()
+
+            if not empty_logs:
+                # search for 'STARTED' site
+	        urls = db.query(('SELECT w.id, w.jahia, w.wordpress, l.status, MAX(l.date) FROM websites w '
+                                +'INNER JOIN logs l ' 
+                                +'ON (w.id = l.website_id '
+                                +    ' AND l.user_id = ' + str(user_id)  
+                                +    ' AND l.browser_id = ' + str(browser_id) + ');')).list()
+                # if 'STARTED' site
+                if urls: 
+                    # There was logs for this user and this browser
+                    if urls[0].status == 'STARTED':
+                        return urls[0]
+                    else:
+                        urls = None
+    
+                # if no 'STARTED' site
+                if not urls:
+                    urls = db.query(('SELECT w.id, w.jahia, w.wordpress FROM websites w LEFT JOIN '
+                                    +'(SELECT done.website_id FROM ' 
+                                    +'(browsers b  INNER JOIN logs l '
+                                    +'ON (b.id = l.browser_id AND ' + str(browser_id) + ' = l.browser_id)) as done) '
+                                    +'ON (website_id =  w.id) '
+                                    +'WHERE website_id IS NULL '
+                                    +'ORDER BY w.random;')).list()
+                                    
+            # if logs is empty 
+            if not urls and empty_logs:
+                urls = db.query('SELECT id, jahia, wordpress, MIN(random) FROM websites;').list()
+            if urls:
+                url = urls[0]
+                url.status = None
+            return url
+
+    @staticmethod
+    def is_logs_empty():
+        logs = db.query('SELECT date FROM logs LIMIT 1;')
+        return (logs is None)
     
     @staticmethod
     def get_browser_id(browser_info):
@@ -85,7 +101,7 @@ class index:
 
 class logs:
 	def GET(self):
-		logs = db.query("SELECT s.jahia, s.wordpress, b.os, b.name, l.date, u.first_name, u.last_name, l.status FROM logs l INNER JOIN browsers b ON l.browser_id=b.id INNER JOIN users u ON l.user_id=u.id INNER JOIN websites s ON l.website_id=s.id ORDER BY l.date DESC;").list()
+		logs = db.query('SELECT * FROM full_logs').list()
 		for log in logs:
 			if log.date:
 				log.date = datetime.datetime.fromtimestamp(int(log.date)).strftime('%Y-%m-%d %H:%M:%S')	
@@ -110,7 +126,7 @@ class compare:
 	    if not url:
                 return "No more sites to compare"
         if not url.status:
-            query.add_log(user_id, browser_id, url.id, 'STARTED')
+            print(query.add_log(user_id, browser_id, url.id, 'STARTED'))
         raise web.seeother('/compare?user_id=' + user_id + '&url1=' + url.jahia + '&url2=' + url.wordpress)
 
     def POST(self):

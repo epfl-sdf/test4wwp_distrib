@@ -13,9 +13,9 @@ reader = csv.reader(credentials)
 i = 0
 next(reader)
 for row in reader:
-    # (id, name, Jahia, WP, userview, password)
+    # (id, name, Jahia, WP, userview, password, random)
     cur.execute(('INSERT INTO websites VALUES(' 
-                + str(i) + ', "'+ row[4] + '", "' + row[2]+ '", "' + row[3] + '", "' + row[6] + '", "' + row[7] + '");\n'))
+                + str(i) + ', "'+ row[3] + '", "' + row[1]+ '", "' + row[2] + '", "' + row[5] + '", "' + row[6] + '", ' + row[0] + ');\n'))
     i += 1
 con.commit()
 credentials.close()

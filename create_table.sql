@@ -23,6 +23,7 @@ CREATE TABLE "websites"(
   "wordpress" TEXT,
   "userview" TEXT,
   "userpwd" TEXT,
+  "random" REAL,
   CONSTRAINT "id_UNIQUE"
     UNIQUE("id")
 );
@@ -54,4 +55,14 @@ CREATE TABLE "logs"(
   FOREIGN KEY("browser_id") REFERENCES "browsers"("id")
   FOREIGN KEY("website_id") REFERENCES "websites"("id")
 );
+
+
+CREATE  VIEW full_logs AS  
+SELECT s.jahia, s.wordpress, b.os, b.name, l.date, u.first_name, u.last_name, l.status 
+FROM logs l 
+INNER JOIN browsers b ON l.browser_id=b.id 
+INNER JOIN users u ON l.user_id=u.id 
+INNER JOIN websites s ON l.website_id=s.id 
+ORDER BY l.date DESC;
+
 COMMIT;
