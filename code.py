@@ -90,7 +90,7 @@ class query:
         else:
             return None
 	
-	@static_method
+	@staticmethod
 	def update_assigned_websites(website_id, browser_id):
 		db.delete('assigned_websites', where='browser_id=' + browser_id + ' AND website_id=' + website_id )	
 
@@ -159,7 +159,7 @@ class next:
             url = web.input(url1=None).url1
             user_id = web.input(user_id=None).user_id
             if user_id != '0':
-		website_id = query.get_id_from_jahia(url)
+		website_id = query.get_id_from_jahia_url(url)
 		query.update_assigned_websites(website_id, browser_id)
                 query.add_log(user_id, browser_id, website_id, statu)
                 raise web.seeother('/compare?user_id=' + user_id)
