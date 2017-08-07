@@ -7,5 +7,5 @@ rm -rf $venvDistrib
 virtualenv -p /usr/bin/python2 $virtFold
 source $virtFold/bin/activate
 pip2 install web.py
-deactivate
+pip2 install httpagentparser
 sudo apt install sqlite3

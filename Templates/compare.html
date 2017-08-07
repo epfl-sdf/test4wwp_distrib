@@ -96,7 +96,7 @@ input {
     	<div class="wrapper" id="wrapper1">
     	</div>
         <div id="div-name">
-            $names[int(user_id)-1].NAME
+            $names[int(user_id)-1].first_name $names[int(user_id)-1].last_name 
         </div>
     	<div class="wrapper" id="wrapper2">
             <div class="inside-wrapper">
@@ -105,7 +105,7 @@ input {
             	        <option value=""> Choisissez l'état du site </option>
 						$for statu in status:
 							$if statu:
-								$if statu != 'BUSY':
+								$if statu != 'STARTED':
 								<option value="$statu"> $statu </option>
             	    </select>
         			<input class="button" type="submit" value="Envoyer" />
