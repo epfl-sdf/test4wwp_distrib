@@ -3,6 +3,10 @@ from web import form
 import time
 from random import randint
 import datetime
+import re
+import base64
+
+from distrib_credentials import distrib_allowed
 
 render = web.template.render('Templates/')
 
@@ -10,9 +14,9 @@ urls = (
 	'/', 'index',
 	'/sites', 'sites',
 	'/compare', 'compare',
-	'/next', 'next'
+	'/next', 'next',
+    '/login', 'login'
 )
-
 
 db = web.database(dbn='sqlite', db='python.db')
 names = db.query('SELECT ID, NAME FROM users').list()
@@ -22,20 +26,44 @@ button = form.Form(
     form.Button("submit", type="submit", description="Next"),
 )
 
+class login:
+    def GET(self):
+        auth = web.ctx.env.get('HTTP_AUTHORIZATION')
+        authreq = False
+        if auth is None:
+            authreq = True
+        else:
+            auth = re.sub('^Basic ','',auth)
+            username,password = base64.decodestring(auth).split(':')
+            if (username,password) in distrib_allowed:
+                raise web.seeother('/')
+            else:
+                authreq = True
+        if authreq:
+            web.header('WWW-Authenticate','Basic realm="Auth example"')
+            web.ctx.status = '401 Unauthorized'
+            return
+
 class index:
     def GET(self):
+        if web.ctx.env.get('HTTP_AUTHORIZATION') is None:
+            raise web.seeother('/login')
         return render.index(names)
 
 class sites:
-	def GET(self):
-		sites = db.query("SELECT * FROM sites;").list()
-		for site in sites:
-			if site.DATE:
-				site.DATE =datetime.datetime.fromtimestamp(int(site.DATE)).strftime('%Y-%m-%d %H:%M:%S')	
-		return render.sites(sites, names, status)
+    def GET(self):
+        sites = db.query("SELECT * FROM sites;").list()
+        if web.ctx.env.get('HTTP_AUTHORIZATION') is None:
+            raise web.seeother('/login')
+        for site in sites:
+            if site.DATE:
+                site.DATE =datetime.datetime.fromtimestamp(int(site.DATE)).strftime('%Y-%m-%d %H:%M:%S')	
+            return render.sites(sites, names, status)
 
 class compare:
     def GET(self):
+        if web.ctx.env.get('HTTP_AUTHORIZATION') is None:
+            raise web.seeother('/login')
         url1 = web.input(url1=None).url1
         url2 = web.input(url2=None).url2
         user_id = web.input(user_id = None).user_id
@@ -57,6 +85,8 @@ class compare:
         raise web.seeother('/compare?user_id=' + user_id + '&url1=' + temp.JAHIA + '&url2=' + temp.WORDPRESS)
 
     def POST(self):
+        if web.ctx.env.get('HTTP_AUTHORIZATION') is None:
+            raise web.seeother('/login')
         user_id = web.input(select=None).select
         if user_id != "empty":
             raise web.seeother('/compare?user_id=' + user_id)
@@ -67,6 +97,8 @@ class compare:
 
 class next:
     def POST(self):
+        if web.ctx.env.get('HTTP_AUTHORIZATION') is None:
+            raise web.seeother('/login')
         statu = web.input(select = None).select
         print(statu)
         if statu:
