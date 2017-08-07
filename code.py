@@ -1,13 +1,15 @@
 import web
-from web import form
 import time
-from random import randint
 import datetime
 import httpagentparser
 
+from web import form
+from random import randint
+from version import __version__
+
 print('\n')
 print('   ---------------------------')
-print('   | Distrib Version : 1.1.1 |')
+print('   | Distrib Version : ' +__version__+' |')
 print('   ---------------------------')
 print('\n')
 
