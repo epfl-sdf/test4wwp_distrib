@@ -8,6 +8,12 @@ import base64
 
 from distrib_credentials import distrib_allowed
 
+print('\n')
+print('   ---------------------------')
+print('   | Distrib Version : 1.1.0 |')
+print('   ---------------------------')
+print('\n')
+
 render = web.template.render('Templates/')
 
 urls = (
