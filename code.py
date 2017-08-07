@@ -159,8 +159,8 @@ class next:
             url = web.input(url1=None).url1
             user_id = web.input(user_id=None).user_id
             if user_id != '0':
-				website_id = query.get_id_from_jahia(url)
-				query.update_assigned_websites(website_id, browser_id)
+		website_id = query.get_id_from_jahia(url)
+		query.update_assigned_websites(website_id, browser_id)
                 query.add_log(user_id, browser_id, website_id, statu)
                 raise web.seeother('/compare?user_id=' + user_id)
             else:
