@@ -36,11 +36,10 @@ CREATE TABLE "browsers"(
     UNIQUE("id")
 );
 CREATE TABLE "assigned_websites"(
-  "user_id" INTEGER NOT NULL,
+  "user_id" INTEGER,
   "browser_id" INTEGER NOT NULL,
   "website_id" INTEGER NOT NULL,
-  PRIMARY KEY("user_id","browser_id", "website_id"),
-  FOREIGN KEY("user_id") REFERENCES "users"("id"),
+  PRIMARY KEY("browser_id", "website_id"),
   FOREIGN KEY("browser_id") REFERENCES "browsers"("id")
   FOREIGN KEY("website_id") REFERENCES "websites"("id")
 );
