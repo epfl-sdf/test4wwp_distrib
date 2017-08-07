@@ -103,5 +103,6 @@ ENV/
 python.db
 sites.sql
 
+venvDistrib/*
 
 
