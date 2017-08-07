@@ -31,4 +31,10 @@ con.commit()
 users.close()
 print('Users OK')
 
+
+# Fill the assigned with false value
+#cur.execute('INSERT INTO browsers VALUES (1, "Firefox", "54", "Linux")')
+#cur.execute('INSERT INTO assigned_websites VALUES (1, 1, 1)')
+#con.commit()
+
 con.close()

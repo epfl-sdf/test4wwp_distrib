@@ -11,9 +11,9 @@ Pages disponibles:
 
 ### Installation:
 **``./install.sh``**
-Nécessite aussi la présence des fichiers credentials.csv et users.csv dans le dossier credentials situé dans le répertoire ausus..
+Nécessite aussi la présence des fichiers credentials.csv et users.csv dans le dossier credentials situé dans le répertoire au-dessus.
 
-Une fois ce  fichiers en place, exécuter **``./loadDB.sh``** pour (ré)initialiser la base de données.
+Une fois ces fichiers en place, exécuter **``./loadDB.sh``** pour (ré)initialiser la base de données.
 
 ### Utilisation:
 **``./start.sh``**
