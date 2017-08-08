@@ -100,7 +100,7 @@ class query:
         if not url:
             url = db.query(('SELECT id, jahia, wordpress FROM '
                         +'(SELECT * FROM assigned_websites aw '
-                        +'WHERE (aw.browser_id = ' + str(browser_id) + ')) as aw '
+                        +'WHERE (aw.user_id IS NULL AND aw.browser_id = ' + str(browser_id) + ')) as aw '
                         +'INNER JOIN websites w '
                         +'ON (w.id = aw.website_id) LIMIT 1;')).list()
         if url:
