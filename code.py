@@ -33,8 +33,7 @@ button = form.Form(
 
 class query:
     @staticmethod
-    def get_url(user_id, browser_info):
-        browser_id = query.get_browser_id(browser_info)
+    def get_url(user_id, browser_id):
         if browser_id and user_id:
             url = None
             urls = None
@@ -89,7 +88,28 @@ class query:
             return browser_id[0].id
         else:
             return None
-	
+
+    @staticmethod
+    def get_assigned_url(user_id, browser_id):
+        url = db.query(('SELECT id, jahia, wordpress FROM '
+                        +'(SELECT * FROM assigned_websites aw '
+                        +'WHERE (aw.browser_id = ' + str(browser_id)  
+                        + ' AND aw.user_id = ' + str(user_id) + ')) as aw '
+                        +'INNER JOIN websites w '
+                        +'ON (w.id = aw.website_id) LIMIT 1;')).list()
+        if not url:
+            url = db.query(('SELECT id, jahia, wordpress FROM '
+                        +'(SELECT * FROM assigned_websites aw '
+                        +'WHERE (aw.browser_id = ' + str(browser_id) + ')) as aw '
+                        +'INNER JOIN websites w '
+                        +'ON (w.id = aw.website_id) LIMIT 1;')).list()
+        if url:
+            url = url[0]
+            url.status = None
+            return url
+        else:
+            return None 
+
     @staticmethod
     def update_assigned_websites(website_id, browser_id):
 	db.delete('assigned_websites', where='browser_id=' + str(browser_id) + ' AND website_id=' + str(website_id) )	
@@ -134,7 +154,9 @@ class compare:
             browser_id = query.get_browser_id(browser_info)
             if not browser_id:
                 browser_id = query.add_browser(browser_info)
-            url = query.get_url(user_id, browser_info)
+            url = query.get_assigned_url(user_id, browser_id)
+            if not url:
+                url = query.get_url(user_id, browser_id)
 	    if not url:
                 return "No more sites to compare"
         if not url.status:
