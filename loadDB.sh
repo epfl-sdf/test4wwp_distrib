@@ -1,6 +1,6 @@
 #!/bin/bash
 CRED='../credentials/'
-
+source venvDistrib/bin/activate
 if [ -f "$CRED"distrib.db ]; 
 then
 	python export_logs.py			 
