@@ -82,7 +82,6 @@ class query:
     def get_browser_id(browser_info):
         browser_id = db.query(( 'SELECT id FROM browsers b '
                         +'WHERE b.name = "' + browser_info['browser']['name'] + '" '
-                        +'AND b.version = "' + browser_info['browser']['version'] + '"'
                         +'AND b.os = "' + browser_info['platform']['name'] + '";'
                     )).list()
         if browser_id:
@@ -118,7 +117,7 @@ class query:
     @staticmethod
     def add_browser(browser_info):
         return db.insert('browsers', name = browser_info['browser']['name'], 
-                version = browser_info['browser']['version'], os = browser_info['platform']['name'])
+                version = 0, os = browser_info['platform']['name'])
     
     @staticmethod
     def add_log(user_id, browser_id, website_id, status):
