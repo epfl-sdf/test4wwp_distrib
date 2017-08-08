@@ -24,7 +24,7 @@ urls = (
 
 
 db = web.database(dbn='sqlite', db='../credentials/distrib.db')
-names = db.query('SELECT id, first_name, last_name FROM users').list()
+names = db.query('SELECT id, first_name, last_name FROM users ORDER BY first_name').list()
 status = ['DONE', 'STARTED', 'EMPTY', 'CONNECTION ERROR', None]
 
 button = form.Form(
@@ -129,7 +129,7 @@ class query:
 
 class index:
     def GET(self):
-        return render.index(names)
+        return render.index(names, __version__)
 
 class logs:
 	def GET(self):
