@@ -19,6 +19,7 @@ urls = (
 	'/', 'index',
 	'/logs', 'logs',
 	'/compare', 'compare',
+	'/assigned', 'assigned',
 	'/next', 'next'
 )
 
@@ -170,7 +171,13 @@ class compare:
         else:
             raise web.seeother('/')
 
+class assigned:
+    def GET(self):
+        browsers = db.query('SELECT * FROM browsers;').list()
+        websites = db.query('SELECT id, jahia, wordpress FROM websites;').list()
+        assigneds = db.query('SELECT * FROM assigned_websites;').list()
 
+        return render.assigned(assigneds, names, browsers, websites)
 
 class next:
     def POST(self):
