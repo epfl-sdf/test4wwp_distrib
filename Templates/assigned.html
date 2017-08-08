@@ -1,0 +1,54 @@
+$def with (assigneds, names, browsers, sites)
+
+<head>
+<title>Liste des sites</title>
+
+<style>
+table {
+	font-family: helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+th, tr {
+	border: 1px solid #dddddd;
+	position: relative;
+    text-align: left;
+    padding: 8px;
+	overflow:auto;
+}
+td {
+	border-right: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+}
+tr:nth-child(odd) {
+	background:#eeeeee;
+}
+tbody {
+	overflow:auto;
+}
+
+</style>
+</head>
+<body>
+    <div id="table-wrapper">
+        <table>
+        	<thead>	
+        	    <tr>
+                    <th>Etudiant</th> 
+                    <th>Navigateur</th> 
+                    <th>Site</th>
+                </tr>
+        	</thead>
+        	<tbody>
+        	$for assigned in assigneds:
+        		<tr>
+                    <td>$(names[assigned.user_id-1] if assigned.user_id else "TOUS")</td>
+                    <td>$browsers[assigned.browser_id]</td>
+                    <td>$sites[assigned.website_id]</td>
+                </tr>
+        	</tbody>
+        </table>
+    </div>
+</body>
