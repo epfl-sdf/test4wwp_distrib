@@ -3,6 +3,7 @@ import time
 import datetime
 import httpagentparser
 
+from operator import itemgetter
 from web import form
 from random import randint
 from version import __version__
@@ -26,6 +27,7 @@ urls = (
 
 db = web.database(dbn='sqlite', db='../credentials/distrib.db')
 names = db.query('SELECT id, first_name, last_name FROM users').list()
+names = sorted(names, key=itemgetter('first_name'))
 status = ['DONE', 'STARTED', 'EMPTY', 'CONNECTION ERROR', None]
 
 button = form.Form(
