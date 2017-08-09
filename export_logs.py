@@ -1,3 +1,4 @@
+# -*- coding: latin-1 -*-
 import os
 import errno 
 import csv
@@ -11,7 +12,7 @@ cursor = con.cursor()
 data = cursor.execute("SELECT s.id, s.jahia, s.wordpress, b.os, b.name, b.version, l.date, u.id, u.first_name, u.last_name, l.status FROM logs l INNER JOIN browsers b ON l.browser_id=b.id INNER JOIN users u ON l.user_id=u.id INNER JOIN websites s ON l.website_id=s.id ORDER BY l.date DESC;")
 adjusted_data = []
 for elem in data:
-	adjusted_data.append((elem[0], elem[1], elem[2], elem[3], elem[4], elem[5], datetime.datetime.fromtimestamp(elem[6]).strftime('%Y-%m-%d_%H:%M:%S'), elem[7], elem[8], elem[9], elem[10]))
+	adjusted_data.append((elem[0], elem[1], elem[2], elem[3], elem[4], elem[5], datetime.datetime.fromtimestamp(elem[6]).strftime('%Y-%m-%d_%H:%M:%S'), elem[7], elem[8].encode('utf-8'), elem[9].encode('utf-8'), elem[10]))
 date = datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d_%H:%M:%S')
 csv_path = path + 'logs-' + date + '.csv'
 with open(csv_path, "wb") as csv_file:
