@@ -1,11 +1,21 @@
 #!/bin/bash
-LAST_BACKUP_TIME=-1
+LAST_BACKUP_TIME=""
 CURR_TIME=$(date +%H)
+COMMAND='python code.py 8081'
+
+function finish () {
+	pkill -f "$COMMAND" 
+	echo 'Arrêt de ' $COMMAND
+	exit
+}
+
+
+trap finish INT
 
 source venvDistrib/bin/activate 
-python code.py 8081
+$COMMAND &
 
-# Exporte le logs chaques heures
+# Exporte le logs chaque heure
 while :
 do
 	CURR_TIME=$(date +%H)
@@ -15,4 +25,5 @@ do
 		python export_logs.py
 	fi
 	sleep 2
+done
 done
