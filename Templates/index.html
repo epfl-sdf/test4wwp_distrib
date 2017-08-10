@@ -1,4 +1,4 @@
-$def with (users)
+$def with (users, version)
 <head>
 <title>Comparateur de pages</title>
 <style>
@@ -39,7 +39,7 @@ $def with (users)
     text-align: center;
     font-family: "Convergence", sans-serif;
 }
-#footer {
+#logs-footer {
     position: absolute;
     bottom: 20px;
     padding-left: 20px;
@@ -53,7 +53,7 @@ $def with (users)
     <div class="wrapper">
         <div id="title-wrapper">
             <h1 id="title">
-                Comparateur de sites web
+                Comparateur de sites web $version
             </h1>
         </div>
         
@@ -62,16 +62,15 @@ $def with (users)
                 <select name="select" class="button"> 
                     <option value="0">Choisissez votre nom </option>
                     $for user in users:
-                        <option value="$user.ID">$user.ID - $user.NAME</option>
+                        <option value="$user.id">$user.first_name $user.last_name ($user.id)</option>
                 </select>
         		<input class="button" type="submit" value="Commençons ! ;-)" />
         	</form>
         </div>
     </div>
-    <div id="footer">
+    <div id="logs-footer">
         <tr>
-            <td height=30>Accès aux databases : </td>
-            <td height=30><a href="/sites">avancées sites webs</a></td>
+            <td height=30><a href="/logs">Accès aux logs</a></td>
         </tr>
     </div>
 </body>
