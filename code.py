@@ -20,6 +20,7 @@ urls = (
 	'/', 'index',
 	'/logs', 'logs',
 	'/compare', 'compare',
+	'/stats', 'stats',
 	'/next', 'next'
 )
 
@@ -94,8 +95,8 @@ class query:
     @staticmethod
     def get_browser_id(browser_info):
         browser_id = db.query(( 'SELECT id FROM browsers b '
-                        +'WHERE b.name = "' + browser_info['browser']['name'] + '" '
-                        +'AND b.os = "' + browser_info['platform']['name'] + '";'
+                        +'WHERE (b.name = "' + browser_info['browser']['name'] + '" '
+                        +'AND b.os = "' + browser_info['platform']['name'] + '");'
                     )).list()
         if browser_id:
             return browser_id[0].id
@@ -130,7 +131,7 @@ class query:
     @staticmethod
     def add_browser(browser_info):
         return db.insert('browsers', name = browser_info['browser']['name'], 
-                version = 0, os = browser_info['platform']['name'])
+                version ='0', os = browser_info['platform']['name'])
     
     @staticmethod
     def add_log(user_id, browser_id, website_id, status):
@@ -183,6 +184,12 @@ class compare:
             raise web.seeother('/compare?user_id=' + user_id)
         else:
             raise web.seeother('/')
+
+class stats:
+    def GET(self):
+        stats = db.query('SELECT * FROM stats').list()
+        total_websites = db.query('SELECT count(id) AS toto FROM websites').list()[0].toto
+        return render.stats(stats, total_websites)
 
 class next:
     def POST(self):
