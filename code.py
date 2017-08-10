@@ -39,7 +39,7 @@ def add_log_to_csv(user_id, browser_id, website_id, status):
     log = db.query('SELECT website_id, jahia, wordpress, os, name, version, date, user_id, first_name, last_name, status from full_logs WHERE user_id=' + str(user_id) + ' AND browser_id=' + str(browser_id) + ' AND website_id=' + str(website_id) + ' AND status="' + status + '";').list()
     if log:
         log = log[0]
-        row_to_write = str(log.website_id) + "," + log.jahia + "," + log.wordpress + "," + log.os + "," + log.name + "," + str(log.version) + "," + datetime.datetime.fromtimestamp(log.date).strftime('%Y-%m-%d_%H:%M:%S') + "," + str(log.user_id) + "," + log.first_name + "," + log.last_name + "," + log.status
+        row_to_write = str(log.website_id) + "," + log.jahia + "," + log.wordpress + "," + log.os + "," + log.name + "," + str(log.version) + "," + datetime.datetime.fromtimestamp(log.date).strftime('%Y-%m-%d_%H:%M:%S') + "," + str(log.user_id) + "," + log.first_name.encode('utf-8') + "," + log.last_name.encode('utf-8') + "," + log.status
         if os.path.exists(path + 'logs.csv'):
             logs = open(path + 'logs.csv', 'r+')
             content = logs.read()
