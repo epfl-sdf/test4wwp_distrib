@@ -1,12 +1,4 @@
--- Creator:       MySQL Workbench 6.3.9/ExportSQLite Plugin 0.1.0
--- Author:        Unknown
--- Caption:       New Model
--- Project:       Name of the project
--- Changed:       2017-08-02 11:04
--- Created:       2017-07-31 11:54
 PRAGMA foreign_keys = ON;
-
--- Schema: 
 
 BEGIN;
 CREATE TABLE "users"(
@@ -57,7 +49,7 @@ CREATE TABLE "logs"(
 
 
 CREATE VIEW full_logs AS  
-SELECT s.jahia, s.wordpress, b.os, b.name, l.date, u.first_name, u.last_name, l.status 
+SELECT s.id as website_id, s.jahia, s.wordpress, b.id as browser_id, b.os, b.name, b.version, l.date, u.id as user_id, u.first_name, u.last_name, l.status 
 FROM logs l 
 INNER JOIN browsers b ON l.browser_id=b.id 
 INNER JOIN users u ON l.user_id=u.id 
