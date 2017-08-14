@@ -49,7 +49,7 @@ CREATE TABLE "logs"(
 
 
 CREATE VIEW full_logs AS  
-SELECT s.id as website_id, s.jahia, s.wordpress, b.id as browser_id, b.os, b.name, b.version, l.date, u.id as user_id, u.first_name, u.last_name, l.status 
+SELECT s.id as website_id, s.name as site_title, s.jahia, s.wordpress, b.id as browser_id, b.os, b.name, b.version, l.date, u.id as user_id, u.first_name, u.last_name, l.status 
 FROM logs l 
 INNER JOIN browsers b ON l.browser_id=b.id 
 INNER JOIN users u ON l.user_id=u.id 
