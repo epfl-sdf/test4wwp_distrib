@@ -18,6 +18,9 @@ th, tr {
     padding: 8px;
 	overflow:auto;
 }
+
+th {}
+
 td {
 	border-right: 1px solid #dddddd;
 	border-left: 1px solid #dddddd;
@@ -25,6 +28,34 @@ td {
 tr:nth-child(odd) {
 	background:#eeeeee;
 }
+
+td.website{
+	background:#ffeeee;
+}
+tr:nth-child(odd) td.website{
+	background:#ffbbbb;
+}
+
+td.browser{
+	background:#e6f3ff;
+}
+tr:nth-child(odd) td.browser{
+	background:#b3d9ff;
+}
+
+td.user{
+	background:#e6ffe6;
+}
+tr:nth-child(odd) td.user{
+	background:#b3ffb3;
+}
+td.status{
+	background:#fffbe6;
+}
+tr:nth-child(odd) td.status{
+	background:#ffe1b3;
+}
+
 tbody {
 	overflow:auto;
 }
@@ -36,25 +67,25 @@ tbody {
         <table>
         	<thead>	
         	    <tr>
-                    <th>JAHIA</th> 
-                    <th>WORDPRESS</th> 
-                    <th>STATUS</th> 
-                    <th>USER</th>
-					<th>OS</th>
-					<th>BROWSER</th> 
-                    <th>DATE</th>
+                    <th>Etudiant</th>
+					<th>Navigateur</th> 
+					<th>OS utilisé</th>
+                    <th>Jahia</th> 
+                    <th>Wordpress</th> 
+                    <th>Status</th> 
+                    <th>Date</th>
                 </tr>
         	</thead>
         	<tbody>
         	$for log in logs:
         		<tr>
-                    <td><a href="$log.jahia">$log.jahia</a></td> 
-        		    <td><a href="$log.wordpress">$log.wordpress </a></td>
-                    <td>$log.status</td>
-                    <td>$log.first_name $log.last_name</td>
-					<td>$log.os</td>
-					<td>$log.name</td> 
-                    <td>$log.date</td>
+                    <td class="user">$log.first_name $log.last_name</td>
+					<td class="browser">$log.name  &nbsp; ($log.version)</td> 
+					<td class="browser">$log.os</td>
+                    <td class="website"><a href="$log.jahia">$log.jahia</a></td> 
+        		    <td class="website"><a href="$log.wordpress">$log.wordpress </a></td>
+                    <td class="status">$log.status</td>
+                    <td class="status">$log.date</td>
                 </tr>
         	</tbody>
         </table>
