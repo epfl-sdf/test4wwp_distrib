@@ -197,9 +197,24 @@ class compare:
 class assigned:
     def GET(self):
         browsers = db.query('SELECT * FROM browsers;').list()
-        websites = db.query('SELECT id, jahia, wordpress FROM websites;').list()
+        websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
         assigneds = db.query('SELECT * FROM assigned_websites;').list()
-        return render.assigned(assigneds, names, browsers, websites)
+        return render.assigned(assigneds, names_orderN, browsers, websites)
+
+    def POST(self):
+        select_user = web.input(select = None).select_user
+        select_browser = web.input(select = None).select_browser
+        select_website = web.input(select = None).select_website
+        # Teste les valeurs
+        
+        db.query(('INSERT INTO assigned_websites VALUES (' 
+                    + str(select_user) + ',' 
+                    + str(select_browser) + ','
+                    + str(select_website) + ')'))
+        browsers = db.query('SELECT * FROM browsers;').list()
+        websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
+        assigneds = db.query('SELECT * FROM assigned_websites;').list()
+        return render.assigned(assigneds, names_orderN, browsers, websites)
 
 class stats:
     def GET(self):

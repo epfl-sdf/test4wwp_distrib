@@ -54,34 +54,40 @@ tbody {
 </style>
 </head>
 <body>
-	<!--
 	<div>
 		<table>
 				<tbody>
-					<tr>
-						<th>
-							<select name ="select-user">
-								<option value=0>Choisissez l'utilisateur</option>
-							</select>
-						</th>
-						<th>
-							<select name ="select-browser">
-								<option value=0>Choisissez le navigateur</option>
-							</select>
-						</th>
-						<th>
-							<select name ="select-websites">
-								<option value=0>Choisissez le site</option>
-							</select>
-						</th>
-						<th>
-							<input type="submit" value="Ajouter ! ">
-						</th>
-					</tr>
+					<form method="post" action="assigned">
+						<tr>
+							<th>
+								<select name = "select_user">
+									<option value=-1>Tous</option>
+										$for user in names:
+										<option value="$user.id">$user.first_name $user.last_name ($user.id)</option>
+								</select>
+							</th>
+							<th>
+								<select name = "select_browser">
+									<option value=-1>Choisissez le navigateur</option>
+										$for browser in browsers:
+											<option value="$browser.id">$browser.name — $browser.os</option>
+								</select>
+							</th>
+							<th>
+								<select name ="select_website">
+									<option value=-1>Choisissez le site</option>
+										$for site in sites:
+											<option value="$site.id">$site.name ($site.id)</option>
+								</select>
+							</th>
+							<th>
+								<input type="submit" value="Ajouter ! ">
+							</th>
+						</tr>
+					</form>
 				</tbody>
 		</table>
 	</div>
-	//-->
     <div id="table-wrapper">
         <table>
         	<thead>	
