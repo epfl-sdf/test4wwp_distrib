@@ -31,7 +31,6 @@ path = '../credentials/'
 db = web.database(dbn='sqlite', db=path+'distrib.db')
 names_orderN = db.query('SELECT id, first_name, last_name FROM users ORDER BY first_name').list()
 names = db.query('SELECT id, first_name, last_name FROM users').list()
-names = sorted(names, key=itemgetter('first_name'))
 status = ['DONE', 'STARTED', 'EMPTY', 'CONNECTION ERROR', None]
 
 button = form.Form(
