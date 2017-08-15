@@ -31,10 +31,11 @@ con.commit()
 users.close()
 print('Users OK')
 
-cur.execute('INSERT INTO browsers VALUES (0, "Firefox", "54.0", "Windows");')
-cur.execute('INSERT INTO browsers VALUES (1, "Firefox", "54.0", "Linux");')
+cur.execute('INSERT INTO browsers VALUES (0, "Firefox", "0", "Windows");')
+cur.execute('INSERT INTO browsers VALUES (1, "Firefox", "0", "Linux");')
 cur.execute('INSERT INTO assigned_websites VALUES (NULL, 1, 1);')
 cur.execute('INSERT INTO assigned_websites VALUES (3, 0, 25);')
 con.commit()
 
 con.close()
+

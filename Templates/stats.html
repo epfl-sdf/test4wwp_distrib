@@ -1,0 +1,68 @@
+$def with (stats, total_websites)
+
+<head>
+<title>Liste des sites</title>
+
+<style>
+table {
+	font-family: helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+th, tr {
+	border: 1px solid #aaaaaa;
+	position: relative;
+    text-align: left;
+    padding: 8px;
+	overflow:auto;
+}
+th {
+	background:#dddddd;
+}
+td:nth-child(even) {
+	border-right: 1px solid #aaaaaa;
+	border-left: 1px solid #aaaaaa;
+}
+td:nth-child(odd){
+	border-right: 1px solid #888888;
+	border-left: 1px solid #888888;
+}
+
+tr:nth-child(even) {
+	background:#eeeeee;
+}
+tbody {
+	overflow:auto;
+}
+
+</style>
+</head>
+<body>
+    <div id="table-wrapper">
+        <table>
+        	<thead>	
+        	    <tr>
+                    <th>Navigateur</th> 
+                    <th>OS utilisé</th> 
+                    <th>Traité</th> 
+                    <th>Page vide</th>
+					<th>Erreur de connexion</th>
+					<th>Total</th> 
+                </tr>
+        	</thead>
+        	<tbody>
+        	$for stat in stats:
+        		<tr>
+                    <td>$stat.name</td> 
+        		    <td>$stat.os</td>
+                    <td>$stat.done</td>
+                    <td>$stat.empty</td>
+					<td>$stat.connection_error</td>
+					<td>$stat.finished / $total_websites</td> 
+                </tr>
+        	</tbody>
+        </table>
+    </div>
+</body>

@@ -1,3 +1,3 @@
 # La version de la distribution
 
-__version__ = "1.2.2"
+__version__ = "1.4.0"

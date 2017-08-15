@@ -2,6 +2,7 @@ import web
 import time
 import datetime
 import httpagentparser
+import os
 
 from operator import itemgetter
 from web import form
@@ -21,11 +22,13 @@ urls = (
 	'/logs', 'logs',
 	'/compare', 'compare',
 	'/assigned', 'assigned',
+	'/stats', 'stats',
 	'/next', 'next'
 )
 
 
-db = web.database(dbn='sqlite', db='../credentials/distrib.db')
+path = '../credentials/'
+db = web.database(dbn='sqlite', db=path+'distrib.db')
 names_orderN = db.query('SELECT id, first_name, last_name FROM users ORDER BY first_name').list()
 names = db.query('SELECT id, first_name, last_name FROM users').list()
 names = sorted(names, key=itemgetter('first_name'))
@@ -34,6 +37,28 @@ status = ['DONE', 'STARTED', 'EMPTY', 'CONNECTION ERROR', None]
 button = form.Form(
     form.Button("submit", type="submit", description="Next"),
 )
+
+def add_log_to_csv(user_id, browser_id, website_id, status):
+    log = db.query(('SELECT website_id, jahia, wordpress, os, name, version, '
+            + 'date, user_id, first_name, last_name, status from full_logs '
+            + 'WHERE user_id=' + str(user_id) + ' AND browser_id=' + str(browser_id) 
+            + ' AND website_id=' + str(website_id) + ' AND status="' + status + '";')).list()
+    if log:
+        log = log[0]
+        row_to_write = ((str(log.website_id) + "," + log.jahia + "," + log.wordpress 
+                + "," + log.os + "," + log.name + "," + str(log.version) + "," 
+                + datetime.datetime.fromtimestamp(log.date).strftime('%Y-%m-%d_%H:%M:%S') 
+                + "," + str(log.user_id) + "," + log.first_name + "," 
+                + log.last_name + "," + log.status)).encode('utf-8')
+        if os.path.exists(path + 'logs.csv'):
+            logs = open(path + 'logs.csv', 'r+')
+            content = logs.read()
+            logs.seek(0, 0)
+            logs.write(row_to_write + "\n" + content)
+        else:
+            logs = open(path + 'logs.csv', 'w+')
+            logs.write(row_to_write)
+        logs.close()
 
 class query:
     @staticmethod
@@ -45,11 +70,7 @@ class query:
 
             if not empty_logs:
                 # search for 'STARTED' site
-	        urls = db.query(('SELECT w.id, w.jahia, w.wordpress, l.status, MAX(l.date) FROM websites w '
-                                +'INNER JOIN logs l ' 
-                                +'ON (w.id = l.website_id '
-                                +    ' AND l.user_id = ' + str(user_id)  
-                                +    ' AND l.browser_id = ' + str(browser_id) + ');')).list()
+                urls = db.query(('SELECT w.id, w.jahia, w.wordpress, l.status, MAX(l.date) FROM websites w INNER JOIN logs l ON (w.id = l.website_id  AND l.user_id = ' + str(user_id) + ' AND l.browser_id = ' + str(browser_id) + ');')).list()
                 # if 'STARTED' site
                 if urls: 
                     # There was logs for this user and this browser
@@ -84,8 +105,8 @@ class query:
     @staticmethod
     def get_browser_id(browser_info):
         browser_id = db.query(( 'SELECT id FROM browsers b '
-                        +'WHERE b.name = "' + browser_info['browser']['name'] + '" '
-                        +'AND b.os = "' + browser_info['platform']['name'] + '";'
+                        +'WHERE (b.name = "' + browser_info['browser']['name'] + '" '
+                        +'AND b.os = "' + browser_info['platform']['name'] + '");'
                     )).list()
         if browser_id:
             return browser_id[0].id
@@ -120,7 +141,7 @@ class query:
     @staticmethod
     def add_browser(browser_info):
         return db.insert('browsers', name = browser_info['browser']['name'], 
-                version = 0, os = browser_info['platform']['name'])
+                version ='0', os = browser_info['platform']['name'])
     
     @staticmethod
     def add_log(user_id, browser_id, website_id, status):
@@ -153,17 +174,18 @@ class compare:
         if url1 and url2:
             return render.compare(names, user_id, status, url1, url2)
         else:
-	    browser_info = httpagentparser.detect(web.ctx.env.get('HTTP_USER_AGENT'))
+            browser_info = httpagentparser.detect(web.ctx.env.get('HTTP_USER_AGENT'))
             browser_id = query.get_browser_id(browser_info)
             if not browser_id:
                 browser_id = query.add_browser(browser_info)
             url = query.get_assigned_url(user_id, browser_id)
             if not url:
                 url = query.get_url(user_id, browser_id)
-	    if not url:
-                return "No more sites to compare"
+        if not url:
+            return "No more sites to compare"
         if not url.status:
-            print(query.add_log(user_id, browser_id, url.id, 'STARTED'))
+            query.add_log(user_id, browser_id, url.id, 'STARTED')
+            add_log_to_csv(user_id, browser_id, url.id, 'STARTED')
         raise web.seeother('/compare?user_id=' + user_id + '&url1=' + url.jahia + '&url2=' + url.wordpress)
 
     def POST(self):
@@ -178,8 +200,13 @@ class assigned:
         browsers = db.query('SELECT * FROM browsers;').list()
         websites = db.query('SELECT id, jahia, wordpress FROM websites;').list()
         assigneds = db.query('SELECT * FROM assigned_websites;').list()
-
         return render.assigned(assigneds, names, browsers, websites)
+
+class stats:
+    def GET(self):
+        stats = db.query('SELECT * FROM stats').list()
+        total_websites = db.query('SELECT count(id) AS toto FROM websites').list()[0].toto
+        return render.stats(stats, total_websites)
 
 class next:
     def POST(self):
@@ -190,9 +217,10 @@ class next:
             url = web.input(url1=None).url1
             user_id = web.input(user_id=None).user_id
             if user_id != '0':
-		website_id = query.get_id_from_jahia_url(url)
-		query.update_assigned_websites(website_id, browser_id)
+                website_id = query.get_id_from_jahia_url(url)
+                query.update_assigned_websites(website_id, browser_id)
                 query.add_log(user_id, browser_id, website_id, statu)
+                add_log_to_csv(user_id, browser_id, website_id, statu)
                 raise web.seeother('/compare?user_id=' + user_id)
             else:
                 raise web.seeother('/')
