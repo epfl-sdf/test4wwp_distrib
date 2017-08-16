@@ -10,7 +10,7 @@ function finish () {
 }
 
 
-trap finish INT
+trap finish EXIT
 
 source venvDistrib/bin/activate 
 $COMMAND &
