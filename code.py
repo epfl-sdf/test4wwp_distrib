@@ -1,8 +1,10 @@
+# -*- coding: utf-8 -*-
 import web
 import time
 import datetime
 import httpagentparser
 import os
+import sqlite3
 
 from operator import itemgetter
 from web import form
@@ -29,8 +31,8 @@ urls = (
 
 path = '../credentials/'
 db = web.database(dbn='sqlite', db=path+'distrib.db')
-names_orderN = db.query('SELECT id, first_name, last_name FROM users ORDER BY first_name').list()
-names = db.query('SELECT id, first_name, last_name FROM users').list()
+names_orderN = db.query('SELECT id, first_name, last_name FROM users WHERE NOT (id = 0) ORDER BY first_name').list()
+names = db.query('SELECT id, first_name, last_name FROM users WHERE NOT (id = 0)').list()
 status = ['DONE', 'STARTED', 'EMPTY', 'CONNECTION ERROR', None]
 
 button = form.Form(
@@ -198,23 +200,33 @@ class assigned:
     def GET(self):
         browsers = db.query('SELECT * FROM browsers;').list()
         websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
-        assigneds = db.query('SELECT * FROM assigned_websites;').list()
-        return render.assigned(assigneds, names_orderN, browsers, websites)
+        assigneds = db.query('SELECT * FROM assigned_websites WHERE (user_id = 0);').list()
+        print(assigneds)
+        return render.assigned(assigneds, names_orderN, browsers, websites, '')
 
     def POST(self):
+        message = ''
         select_user = web.input(select = None).select_user
         select_browser = web.input(select = None).select_browser
         select_website = web.input(select = None).select_website
         # Teste les valeurs
+        if (select_user == '-1'):
+            select_user = 'NULL'
         
-        db.query(('INSERT INTO assigned_websites VALUES (' 
-                    + str(select_user) + ',' 
-                    + str(select_browser) + ','
-                    + str(select_website) + ')'))
+        try:
+            db.query(('INSERT INTO assigned_websites VALUES (' 
+                        + str(select_user) + ',' 
+                        + str(select_browser) + ','
+                        + str(select_website) + ')'))
+        except sqlite3.IntegrityError as e:
+            print (e)
+            message = "L'entrée est déjà existante"
+            
+
         browsers = db.query('SELECT * FROM browsers;').list()
         websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
         assigneds = db.query('SELECT * FROM assigned_websites;').list()
-        return render.assigned(assigneds, names_orderN, browsers, websites)
+        return render.assigned(assigneds, names_orderN, browsers, websites, message)
 
 class stats:
     def GET(self):

@@ -15,7 +15,8 @@ next(reader)
 for row in reader:
     # (id, name, Jahia, WP, userview, password, random)
     cur.execute(('INSERT INTO websites VALUES(' 
-                + str(i) + ', "'+ row[3] + '", "' + row[1]+ '", "' + row[2] + '", "' + row[5] + '", "' + row[6] + '", ' + row[0] + ');\n'))
+                + str(i) + ', "'+ row[3] + '", "' + row[1]+ '", "' + row[2] + '", "' 
+                + row[5] + '", "' + row[6] + '", ' + row[0] + ');\n'))
     i += 1
 con.commit()
 credentials.close()
@@ -31,9 +32,13 @@ con.commit()
 users.close()
 print('Users OK')
 
-cur.execute('INSERT INTO browsers VALUES (0, "Firefox", "0", "Windows");')
-cur.execute('INSERT INTO browsers VALUES (1, "Firefox", "0", "Linux");')
-cur.execute('INSERT INTO assigned_websites VALUES (NULL, 1, 1);')
+# Insere l'utilisateur "Tous" et le browser "Tous"
+cur.execute('INSERT INTO users VALUES (0, "Tous", "Tous")')
+cur.execute('INSERT INTO browsers VALUES (0, "Tous", "0", "Tous");')
+
+cur.execute('INSERT INTO browsers VALUES (1, "Firefox", "0", "Windows");')
+cur.execute('INSERT INTO browsers VALUES (2, "Firefox", "0", "Linux");')
+cur.execute('INSERT INTO assigned_websites VALUES (0, 1, 1);')
 cur.execute('INSERT INTO assigned_websites VALUES (3, 0, 25);')
 con.commit()
 

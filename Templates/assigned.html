@@ -1,7 +1,8 @@
-$def with (assigneds, names, browsers, sites)
+$def with (assigneds, names, browsers, sites, message)
 
 <head>
 <title>Liste des sites</title>
+<link rel="icon" type="image/png" href="https://wiki.epfl.ch/sdf/documents/logo_sdf.png" />
 
 <style>
 table {
@@ -51,6 +52,15 @@ tbody {
 	overflow:auto;
 }
 
+.message{
+	font-family: helvetica, sans-serif;
+	font-size:20px;
+	text-align:center;
+	border-style: solid;
+	border-size: 1px;
+	width:500px;
+}
+
 </style>
 </head>
 <body>
@@ -88,6 +98,12 @@ tbody {
 				</tbody>
 		</table>
 	</div>
+	<div>
+		<div class="message">
+			$if message:
+				<p>$message</p>
+		</div>
+	</div>
     <div id="table-wrapper">
         <table>
         	<thead>	
@@ -100,6 +116,7 @@ tbody {
                     <th>ID du site</th>
                     <th>Jahia</th>
                     <th>Wordpress</th>
+					<th>Suppression</th>
                 </tr>
         	</thead>
         	<tbody>
@@ -118,6 +135,7 @@ tbody {
                     <td class="website">$assigned.website_id </td>
                     <td class="website"><a href="$sites[assigned.website_id].jahia">$sites[assigned.website_id].jahia</a></td>
                     <td class="website"><a href="$sites[assigned.website_id].wordpress">$sites[assigned.website_id].wordpress</a></td>
+                    <td class="website"><input type="sumbit" value="X"></td>
                 </tr>
         	</tbody>
         </table>
