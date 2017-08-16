@@ -1,0 +1,119 @@
+$def with (assigneds, names, browsers, sites)
+
+<head>
+<title>Liste des sites</title>
+
+<style>
+table {
+	font-family: helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+
+th, tr {
+	border: 1px solid #dddddd;
+	position: relative;
+    text-align: left;
+    padding: 8px;
+	overflow:auto;
+}
+td {
+	border-right: 1px solid #dddddd;
+	border-left: 1px solid #dddddd;
+}
+tr:nth-child(odd) {
+	background:#eeeeee;
+}
+
+td.website{
+	background:#ffeeee;
+}
+tr:nth-child(odd) td.website{
+	background:#ffbbbb;
+}
+
+td.browser{
+	background:#e6f3ff;
+}
+tr:nth-child(odd) td.browser{
+	background:#b3d9ff;
+}
+
+td.user{
+	background:#e6ffe6;
+}
+tr:nth-child(odd) td.user{
+	background:#b3ffb3;
+}
+
+tbody {
+	overflow:auto;
+}
+
+</style>
+</head>
+<body>
+	<!--
+	<div>
+		<table>
+				<tbody>
+					<tr>
+						<th>
+							<select name ="select-user">
+								<option value=0>Choisissez l'utilisateur</option>
+							</select>
+						</th>
+						<th>
+							<select name ="select-browser">
+								<option value=0>Choisissez le navigateur</option>
+							</select>
+						</th>
+						<th>
+							<select name ="select-websites">
+								<option value=0>Choisissez le site</option>
+							</select>
+						</th>
+						<th>
+							<input type="submit" value="Ajouter ! ">
+						</th>
+					</tr>
+				</tbody>
+		</table>
+	</div>
+	//-->
+    <div id="table-wrapper">
+        <table>
+        	<thead>	
+        	    <tr>
+                    <th>Etudiant</th> 
+                    <th>ID du navigateur</th> 
+                    <th>Nom du navigateur</th> 
+                    <th>Version du navigateur</th> 
+                    <th>OS utlilisé</th> 
+                    <th>ID du site</th>
+                    <th>Jahia</th>
+                    <th>Wordpress</th>
+                </tr>
+        	</thead>
+        	<tbody>
+        	$for assigned in assigneds:
+        		<tr>
+                    <td class="user">
+					$if assigned.user_id:
+						$assigned.user_id - $names[assigned.user_id-1].first_name $names[assigned.user_id-1].last_name
+					$else:
+						Tous
+					</td>
+                    <td class="browser">$assigned.browser_id</td>
+                    <td class="browser">$browsers[assigned.browser_id].name</td>
+                    <td class="browser">$browsers[assigned.browser_id].version</td>
+                    <td class="browser">$browsers[assigned.browser_id].os</td>
+                    <td class="website">$assigned.website_id </td>
+                    <td class="website"><a href="$sites[assigned.website_id].jahia">$sites[assigned.website_id].jahia</a></td>
+                    <td class="website"><a href="$sites[assigned.website_id].wordpress">$sites[assigned.website_id].wordpress</a></td>
+                </tr>
+        	</tbody>
+        </table>
+    </div>
+</body>

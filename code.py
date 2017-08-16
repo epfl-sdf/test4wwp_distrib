@@ -5,6 +5,7 @@ import httpagentparser
 import os
 import sqlite3
 
+from operator import itemgetter
 from web import form
 from random import randint
 from version import __version__
@@ -21,6 +22,7 @@ urls = (
 	'/', 'index',
 	'/logs', 'logs',
 	'/compare', 'compare',
+	'/assigned', 'assigned',
 	'/stats', 'stats',
 	'/next', 'next'
 )
@@ -41,6 +43,7 @@ def add_log_to_csv(user_id, browser_id, website_id, status):
     if log:
         log = log[0]
         row_to_write = (str(log.website_id) + "," + log.site_title + "," + log.jahia + "," + log.wordpress + "," + str(log.browser_id) + "," + log.os + "," + log.name + "," + str(log.version) + "," + datetime.datetime.fromtimestamp(log.date).strftime('%Y-%m-%d_%H:%M:%S') + "," + str(log.user_id) + "," + log.first_name + "," + log.last_name + "," + log.status).encode('utf-8')
+
         if os.path.exists(path + 'logs.csv'):
             print('append path')
             logs = open(path + 'logs.csv', 'a')
@@ -195,6 +198,13 @@ class compare:
             raise web.seeother('/compare?user_id=' + user_id)
         else:
             raise web.seeother('/')
+
+class assigned:
+    def GET(self):
+        browsers = db.query('SELECT * FROM browsers;').list()
+        websites = db.query('SELECT id, jahia, wordpress FROM websites;').list()
+        assigneds = db.query('SELECT * FROM assigned_websites;').list()
+        return render.assigned(assigneds, names, browsers, websites)
 
 class stats:
     def GET(self):
