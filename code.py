@@ -3,6 +3,7 @@ import time
 import datetime
 import httpagentparser
 import os
+import sqlite3
 
 from operator import itemgetter
 from web import form
@@ -38,24 +39,28 @@ button = form.Form(
 )
 
 def add_log_to_csv(user_id, browser_id, website_id, status):
-    log = db.query(('SELECT website_id, jahia, wordpress, os, name, version, '
-            + 'date, user_id, first_name, last_name, status from full_logs '
-            + 'WHERE user_id=' + str(user_id) + ' AND browser_id=' + str(browser_id) 
-            + ' AND website_id=' + str(website_id) + ' AND status="' + status + '";')).list()
+    log = db.query('SELECT website_id, site_title, jahia, wordpress, browser_id, os, name, version, date, user_id, first_name, last_name, status from full_logs WHERE user_id=' + str(user_id) + ' AND browser_id=' + str(browser_id) + ' AND website_id=' + str(website_id) + ' AND status="' + status + '";').list()
     if log:
         log = log[0]
-        row_to_write = ((str(log.website_id) + "," + log.jahia + "," + log.wordpress 
-                + "," + log.os + "," + log.name + "," + str(log.version) + "," 
-                + datetime.datetime.fromtimestamp(log.date).strftime('%Y-%m-%d_%H:%M:%S') 
-                + "," + str(log.user_id) + "," + log.first_name + "," 
-                + log.last_name + "," + log.status)).encode('utf-8')
+        row_to_write = (str(log.website_id) + "," + log.site_title + "," + log.jahia + "," + log.wordpress + "," + str(log.browser_id) + "," + log.os + "," + log.name + "," + str(log.version) + "," + datetime.datetime.fromtimestamp(log.date).strftime('%Y-%m-%d_%H:%M:%S') + "," + str(log.user_id) + "," + log.first_name + "," + log.last_name + "," + log.status).encode('utf-8')
+
         if os.path.exists(path + 'logs.csv'):
-            logs = open(path + 'logs.csv', 'r+')
-            content = logs.read()
-            logs.seek(0, 0)
-            logs.write(row_to_write + "\n" + content)
+            print('append path')
+            logs = open(path + 'logs.csv', 'a')
+            logs.write('\n' + row_to_write)
         else:
             logs = open(path + 'logs.csv', 'w+')
+            # Ecris les noms des colonnes
+            conn = sqlite3.connect(path + 'distrib.db')
+            cursor = conn.cursor()
+            cursor.execute('SELECT * FROM full_logs;')
+            field_names = [i[0] for i in cursor.description]
+            header = ''
+            for name in field_names:
+                header += name + ','
+            header = header.encode('utf-8')
+            print(field_names)
+            logs.write(header + '\n')
             logs.write(row_to_write)
         logs.close()
 
