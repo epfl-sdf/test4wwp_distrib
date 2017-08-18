@@ -200,9 +200,9 @@ class assigned:
     def GET(self):
         browsers = db.query('SELECT * FROM browsers;').list()
         websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
-        assigneds = db.query('SELECT * FROM assigned_websites WHERE (user_id = 0);').list()
+        assigneds = db.query('SELECT * FROM assigned_websites;').list()
         print(assigneds)
-        return render.assigned(assigneds, names_orderN, browsers, websites, '')
+        return render.assigned(assigneds, names, names_orderN, browsers, websites, '')
 
     def POST(self):
         message = ''
@@ -226,7 +226,7 @@ class assigned:
         browsers = db.query('SELECT * FROM browsers;').list()
         websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
         assigneds = db.query('SELECT * FROM assigned_websites;').list()
-        return render.assigned(assigneds, names_orderN, browsers, websites, message)
+        return render.assigned(assigneds, names, names_orderN, browsers, websites, message)
 
 class stats:
     def GET(self):

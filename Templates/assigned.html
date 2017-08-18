@@ -1,4 +1,4 @@
-$def with (assigneds, names, browsers, sites, message)
+$def with (assigneds, names, names_orderN, browsers, sites, message)
 
 <head>
 <title>Liste des sites</title>
@@ -72,7 +72,7 @@ tbody {
 							<th>
 								<select name = "select_user">
 									<option value=-1>Tous</option>
-										$for user in names:
+										$for user in names_orderN:
 										<option value="$user.id">$user.first_name $user.last_name ($user.id)</option>
 								</select>
 							</th>
