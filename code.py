@@ -11,6 +11,14 @@ from web import form
 from random import randint
 from version import __version__
 
+# Pour débuguer
+DEBUG = True
+
+def debug(string):
+    if DEBUG:
+        print(string)
+
+
 print('\n')
 print('   ---------------------------')
 print('   | Distrib Version : ' +__version__+' |')
@@ -136,8 +144,13 @@ class query:
             return None 
 
     @staticmethod
-    def update_assigned_websites(website_id, browser_id):
-	db.delete('assigned_websites', where='browser_id=' + str(browser_id) + ' AND website_id=' + str(website_id) )	
+    def update_assigned_websites(website_id, browser_id, user_id):
+        debug('delete from assgined'):
+        # Prend la liste des assigned ayant l'id de website_id
+        assigned_with_web_id = db.query(())  
+        # Suprime dans assigned_websites web_id, brow_id et usr_id
+        db.delete('assigned_websites', where='browser_id=' + str(browser_id) + ' AND website_id=' + str(website_id) + 'AND user_id' + str(user_id))	
+        return
 
     @staticmethod
     def add_browser(browser_info):
@@ -244,7 +257,7 @@ class next:
             user_id = web.input(user_id=None).user_id
             if user_id != '0':
                 website_id = query.get_id_from_jahia_url(url)
-                query.update_assigned_websites(website_id, browser_id)
+                query.update_assigned_websites(website_id, browser_id, user_id)
                 query.add_log(user_id, browser_id, website_id, statu)
                 add_log_to_csv(user_id, browser_id, website_id, statu)
                 raise web.seeother('/compare?user_id=' + user_id)
