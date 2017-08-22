@@ -52,13 +52,16 @@ tbody {
 	overflow:auto;
 }
 
+
 .message{
 	font-family: helvetica, sans-serif;
 	font-size:20px;
 	text-align:center;
-	border-style: solid;
-	border-size: 1px;
-	width:500px;
+	border: 2px solid #888888;
+	width: 33%; /*can be in percentage also.*/
+    height: auto;
+    margin: 0 auto;
+    position: relative;
 }
 
 </style>
@@ -71,7 +74,7 @@ tbody {
 						<tr>
 							<th>
 								<select name = "select_user">
-									<option value=-1>Tous</option>
+									<option value=-1>N'importe quel utilisateur</option>
 										$for user in names_orderN:
 										<option value="$user.id">$user.first_name $user.last_name ($user.id)</option>
 								</select>
@@ -98,9 +101,9 @@ tbody {
 				</tbody>
 		</table>
 	</div>
-	<div>
+	<div id="container">
+	$if message:
 		<div class="message">
-			$if message:
 				<p>$message</p>
 		</div>
 	</div>
@@ -120,23 +123,25 @@ tbody {
                 </tr>
         	</thead>
         	<tbody>
-        	$for assigned in assigneds:
-        		<tr>
-                    <td class="user">
+        		$for assigned in assigneds:
+        			<tr>
+					<td class="user">
 					$if assigned.user_id:
 						$assigned.user_id - $names[assigned.user_id-1].first_name $names[assigned.user_id-1].last_name
 					$else:
-						Tous
+						N'importe quel utilisateur
 					</td>
-                    <td class="browser">$assigned.browser_id</td>
-                    <td class="browser">$browsers[assigned.browser_id].name</td>
-                    <td class="browser">$browsers[assigned.browser_id].version</td>
-                    <td class="browser">$browsers[assigned.browser_id].os</td>
-                    <td class="website">$assigned.website_id </td>
-                    <td class="website"><a href="$sites[assigned.website_id].jahia">$sites[assigned.website_id].jahia</a></td>
-                    <td class="website"><a href="$sites[assigned.website_id].wordpress">$sites[assigned.website_id].wordpress</a></td>
-                    <td class="website"><input type="sumbit" value="X"></td>
-                </tr>
+					<td class="browser">$assigned.browser_id</td>
+					<td class="browser">$browsers[assigned.browser_id].name</td>
+					<td class="browser">$browsers[assigned.browser_id].version</td>
+					<td class="browser">$browsers[assigned.browser_id].os</td>
+					<td class="website">$assigned.website_id </td>
+					<td class="website"><a href="$sites[assigned.website_id].jahia">$sites[assigned.website_id].jahia</a></td>
+					<td class="website"><a href="$sites[assigned.website_id].wordpress">$sites[assigned.website_id].wordpress</a></td>
+					<form method="post" name="" action="delete">
+						<td class="website"><input type="submit" name="$assigned.user_id,$assigned.browser_id,$assigned.website_id" value="supprimer"><td>
+					</form>
+            	    </tr>
         	</tbody>
         </table>
     </div>

@@ -33,7 +33,8 @@ urls = (
 	'/compare', 'compare',
 	'/assigned', 'assigned',
 	'/stats', 'stats',
-	'/next', 'next'
+	'/next', 'next',
+        '/delete', 'delete'
 )
 
 
@@ -276,6 +277,17 @@ class assigned:
         websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
         assigneds = db.query('SELECT * FROM assigned_websites;').list()
         return render.assigned(assigneds, names, names_orderN, browsers, websites, message)
+
+class delete:
+    def POST(self):
+        values = web.input().keys()[0]
+        values = values.split(',')
+        db.delete('assigned_websites', where=('user_id=' + values[0] 
+                                                + ' AND browser_id=' + values[1] 
+                                                + ' AND website_id=' + values[2]))
+        print(values)
+        print('Hellllllo')
+        raise web.seeother('/assigned')
 
 class stats:
     def GET(self):

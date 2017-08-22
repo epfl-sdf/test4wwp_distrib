@@ -33,15 +33,15 @@ users.close()
 print('Users OK')
 
 # Insere l'utilisateur "Tous" et le browser "Tous"
-cur.execute('INSERT INTO users VALUES (0, "Tous", "Tous")')
-cur.execute('INSERT INTO browsers VALUES (0, "Tous", "0", "Tous");')
+cur.execute('INSERT INTO users VALUES (0, "N\'importe quel utilisateur", "N\'importe quel utilisateur")')
+cur.execute('INSERT INTO browsers VALUES (0, "N\'import quel navigateur", "0", "N\'importe quel OS");')
 
 cur.execute('INSERT INTO browsers VALUES (1, "Firefox", "0", "Linux");')
 cur.execute('INSERT INTO browsers VALUES (2, "Firefox", "0", "Windows");')
-cur.execute('INSERT INTO assigned_websites VALUES (0, 1, 1);')
-#cur.execute('INSERT INTO assigned_websites VALUES (0, 0, 1);')
-#cur.execute('INSERT INTO assigned_websites VALUES (1, 0, 1);')
-#cur.execute('INSERT INTO assigned_websites VALUES (1, 1, 1);')
+cur.execute('INSERT INTO assigned_websites VALUES (0, 1, 4);')
+cur.execute('INSERT INTO assigned_websites VALUES (0, 0, 1);')
+cur.execute('INSERT INTO assigned_websites VALUES (1, 0, 1);')
+cur.execute('INSERT INTO assigned_websites VALUES (1, 1, 1);')
 con.commit()
 
 con.close()
