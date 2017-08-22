@@ -128,7 +128,7 @@ class query:
         url = db.query(('SELECT id, jahia, wordpress FROM '
                         +'(SELECT * FROM assigned_websites aw '
                         +'WHERE (aw.browser_id = ' + str(browser_id)  
-                        + ' AND aw.user_id = ' + str(user_id) + ')) as aw '
+                        +' AND aw.user_id = ' + str(user_id) + ')) as aw '
                         +'INNER JOIN websites w '
                         +'ON (w.id = aw.website_id) LIMIT 1;')).list()
         if not url:
@@ -136,7 +136,7 @@ class query:
             url = db.query(('SELECT id, jahia, wordpress FROM '
                         +'(SELECT * FROM assigned_websites aw '
                         +'WHERE (aw.user_id = '+ str(user_id) 
-                        + ' AND aw.browser_id = 0)) as aw '
+                        +' AND aw.browser_id = 0)) as aw '
                         +'INNER JOIN websites w '
                         +'ON (w.id = aw.website_id) LIMIT 1;')).list()
         if not url:
@@ -144,7 +144,7 @@ class query:
             url = db.query(('SELECT id, jahia, wordpress FROM '
                         +'(SELECT * FROM assigned_websites aw '
                         +'WHERE (aw.user_id = 0' 
-                        + ' AND aw.browser_id =' + str(browser_id) + ')) as aw '
+                        +' AND aw.browser_id =' + str(browser_id) + ')) as aw '
                         +'INNER JOIN websites w '
                         +'ON (w.id = aw.website_id) LIMIT 1;')).list()
         if not url:
@@ -152,7 +152,7 @@ class query:
             url = db.query(('SELECT id, jahia, wordpress FROM '
                         +'(SELECT * FROM assigned_websites aw '
                         +'WHERE (aw.user_id = 0' 
-                        + ' AND aw.browser_id = 0)) as aw '
+                        +' AND aw.browser_id = 0)) as aw '
                         +'INNER JOIN websites w '
                         +'ON (w.id = aw.website_id) LIMIT 1;')).list()
        
