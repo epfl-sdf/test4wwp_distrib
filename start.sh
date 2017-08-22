@@ -8,7 +8,6 @@ function finish () {
 	echo 'Arrêt de ' $COMMAND
 	exit
 }
-
 trap finish EXIT 
 	source venvDistrib/bin/activate 
 	$COMMAND &
