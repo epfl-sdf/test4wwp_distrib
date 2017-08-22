@@ -34,7 +34,7 @@ print('Users OK')
 
 # Insere l'utilisateur "Tous" et le browser "Tous"
 cur.execute('INSERT INTO users VALUES (0, "N\'importe quel utilisateur", "N\'importe quel utilisateur")')
-cur.execute('INSERT INTO browsers VALUES (0, "N\'import quel navigateur", "0", "N\'importe quel OS");')
+cur.execute('INSERT INTO browsers VALUES (0, "N\'importe quel navigateur", "0", "N\'importe quel OS");')
 
 cur.execute('INSERT INTO browsers VALUES (1, "Firefox", "0", "Linux");')
 cur.execute('INSERT INTO browsers VALUES (2, "Firefox", "0", "Windows");')
