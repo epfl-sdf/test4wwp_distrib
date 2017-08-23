@@ -1,7 +1,8 @@
-$def with (assigneds, names, browsers, sites)
+$def with (assigneds, names, names_orderN, browsers, sites, message)
 
 <head>
 <title>Liste des sites</title>
+<link rel="icon" type="image/png" href="https://wiki.epfl.ch/sdf/documents/logo_sdf.png" />
 
 <style>
 table {
@@ -51,37 +52,61 @@ tbody {
 	overflow:auto;
 }
 
+
+.message{
+	font-family: helvetica, sans-serif;
+	font-size:20px;
+	text-align:center;
+	border: 2px solid #888888;
+	width: 33%; /*can be in percentage also.*/
+    height: auto;
+    margin: 0 auto;
+    position: relative;
+}
+
 </style>
 </head>
 <body>
-	<!--
 	<div>
 		<table>
 				<tbody>
-					<tr>
-						<th>
-							<select name ="select-user">
-								<option value=0>Choisissez l'utilisateur</option>
-							</select>
-						</th>
-						<th>
-							<select name ="select-browser">
-								<option value=0>Choisissez le navigateur</option>
-							</select>
-						</th>
-						<th>
-							<select name ="select-websites">
-								<option value=0>Choisissez le site</option>
-							</select>
-						</th>
-						<th>
-							<input type="submit" value="Ajouter ! ">
-						</th>
-					</tr>
+					<form method="post" action="assigned">
+						<tr>
+							<th>
+								<select name = "select_user">
+									<option value=0>N'importe quel utilisateur</option>
+										$for user in names_orderN:
+										<option value="$user.id">$user.first_name $user.last_name ($user.id)</option>
+								</select>
+							</th>
+							<th>
+								<select name = "select_browser">
+									<option value=-1>Choisissez le navigateur</option>
+										$for browser in browsers:
+											<option value="$browser.id">$browser.name — $browser.os</option>
+								</select>
+							</th>
+							<th>
+								<select name ="select_website">
+									<option value=-1>Choisissez le site</option>
+										$for site in sites:
+											<option value="$site.id">$site.name ($site.id)</option>
+								</select>
+							</th>
+							<th>
+								<input type="submit" value="Ajouter ! ">
+							</th>
+						</tr>
+					</form>
 				</tbody>
 		</table>
 	</div>
-	//-->
+	<div id="container">
+	$if message:
+		<div class="message">
+				<p>$message</p>
+		</div>
+	</div>
     <div id="table-wrapper">
         <table>
         	<thead>	
@@ -94,25 +119,29 @@ tbody {
                     <th>ID du site</th>
                     <th>Jahia</th>
                     <th>Wordpress</th>
+					<th>Suppression</th>
                 </tr>
         	</thead>
         	<tbody>
-        	$for assigned in assigneds:
-        		<tr>
-                    <td class="user">
+        		$for assigned in assigneds:
+        			<tr>
+					<td class="user">
 					$if assigned.user_id:
 						$assigned.user_id - $names[assigned.user_id-1].first_name $names[assigned.user_id-1].last_name
 					$else:
-						Tous
+						N'importe quel utilisateur
 					</td>
-                    <td class="browser">$assigned.browser_id</td>
-                    <td class="browser">$browsers[assigned.browser_id].name</td>
-                    <td class="browser">$browsers[assigned.browser_id].version</td>
-                    <td class="browser">$browsers[assigned.browser_id].os</td>
-                    <td class="website">$assigned.website_id </td>
-                    <td class="website"><a href="$sites[assigned.website_id].jahia">$sites[assigned.website_id].jahia</a></td>
-                    <td class="website"><a href="$sites[assigned.website_id].wordpress">$sites[assigned.website_id].wordpress</a></td>
-                </tr>
+					<td class="browser">$assigned.browser_id</td>
+					<td class="browser">$browsers[assigned.browser_id].name</td>
+					<td class="browser">$browsers[assigned.browser_id].version</td>
+					<td class="browser">$browsers[assigned.browser_id].os</td>
+					<td class="website">$assigned.website_id </td>
+					<td class="website"><a href="$sites[assigned.website_id].jahia">$sites[assigned.website_id].jahia</a></td>
+					<td class="website"><a href="$sites[assigned.website_id].wordpress">$sites[assigned.website_id].wordpress</a></td>
+					<form method="post" name="" action="delete">
+						<td class="website"><input type="submit" name="$assigned.user_id,$assigned.browser_id,$assigned.website_id" value="supprimer"><td>
+					</form>
+            	    </tr>
         	</tbody>
         </table>
     </div>

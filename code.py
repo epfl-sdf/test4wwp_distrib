@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import web
 import time
 import datetime
@@ -9,6 +10,14 @@ from operator import itemgetter
 from web import form
 from random import randint
 from version import __version__
+
+# Pour débuguer
+DEBUG = True
+
+def debug(string):
+    if DEBUG:
+        print(string)
+
 
 print('\n')
 print('   ---------------------------')
@@ -24,14 +33,15 @@ urls = (
 	'/compare', 'compare',
 	'/assigned', 'assigned',
 	'/stats', 'stats',
-	'/next', 'next'
+	'/next', 'next',
+        '/delete', 'delete'
 )
 
 
 path = '../credentials/'
 db = web.database(dbn='sqlite', db=path+'distrib.db')
-names_orderN = db.query('SELECT id, first_name, last_name FROM users ORDER BY first_name').list()
-names = db.query('SELECT id, first_name, last_name FROM users').list()
+names_orderN = db.query('SELECT id, first_name, last_name FROM users WHERE NOT (id = 0) ORDER BY first_name').list()
+names = db.query('SELECT id, first_name, last_name FROM users WHERE NOT (id = 0)').list()
 status = ['DONE', 'STARTED', 'EMPTY', 'CONNECTION ERROR', None]
 
 button = form.Form(
@@ -119,18 +129,38 @@ class query:
 
     @staticmethod
     def get_assigned_url(user_id, browser_id):
+        # regarde si site attribué à user_id et browser_id
         url = db.query(('SELECT id, jahia, wordpress FROM '
                         +'(SELECT * FROM assigned_websites aw '
                         +'WHERE (aw.browser_id = ' + str(browser_id)  
-                        + ' AND aw.user_id = ' + str(user_id) + ')) as aw '
+                        +' AND aw.user_id = ' + str(user_id) + ')) as aw '
                         +'INNER JOIN websites w '
                         +'ON (w.id = aw.website_id) LIMIT 1;')).list()
         if not url:
+            # si site attribué à user_id et browser_id=0
             url = db.query(('SELECT id, jahia, wordpress FROM '
                         +'(SELECT * FROM assigned_websites aw '
-                        +'WHERE (aw.user_id IS NULL AND aw.browser_id = ' + str(browser_id) + ')) as aw '
+                        +'WHERE (aw.user_id = '+ str(user_id) 
+                        +' AND aw.browser_id = 0)) as aw '
                         +'INNER JOIN websites w '
                         +'ON (w.id = aw.website_id) LIMIT 1;')).list()
+        if not url:
+            # si site attribué à user_id=0 et browser_id
+            url = db.query(('SELECT id, jahia, wordpress FROM '
+                        +'(SELECT * FROM assigned_websites aw '
+                        +'WHERE (aw.user_id = 0' 
+                        +' AND aw.browser_id =' + str(browser_id) + ')) as aw '
+                        +'INNER JOIN websites w '
+                        +'ON (w.id = aw.website_id) LIMIT 1;')).list()
+        if not url:
+            # si site attribué à user_id=0 et browser_id=0
+            url = db.query(('SELECT id, jahia, wordpress FROM '
+                        +'(SELECT * FROM assigned_websites aw '
+                        +'WHERE (aw.user_id = 0' 
+                        +' AND aw.browser_id = 0)) as aw '
+                        +'INNER JOIN websites w '
+                        +'ON (w.id = aw.website_id) LIMIT 1;')).list()
+       
         if url:
             url = url[0]
             url.status = None
@@ -139,8 +169,29 @@ class query:
             return None 
 
     @staticmethod
-    def update_assigned_websites(website_id, browser_id):
-	db.delete('assigned_websites', where='browser_id=' + str(browser_id) + ' AND website_id=' + str(website_id) )	
+    def update_assigned_websites(user_id, browser_id, website_id):
+        debug('usr_id: ' + str(user_id) + '\nbrw_id: ' + str(browser_id) + '\nweb_id: ' + str(website_id))
+        # Prend la liste des assigned ayant l'id de website_id
+        assigned_with_web_id = db.query(('SELECT * FROM assigned_websites '
+                                        + 'WHERE website_id=' + str(website_id) + ';')).list()  
+        for asweb in assigned_with_web_id:
+            debug(asweb)
+            # user fixed and browser fixed
+            if asweb.user_id == user_id and asweb.browser_id == browser_id:
+                db.delete('assigned_websites', where=('user_id=' + str(user_id) 
+                        + ' AND browser_id=' + str(browser_id) + ' AND website_id=' + str(website_id)))	
+            # user fixed and browser not fixed
+            elif asweb.user_id == user_id and asweb.browser_id == 0:
+                db.delete('assigned_websites',where=('user_id=' + str(user_id) 
+                                                + ' AND browser_id=0 AND website_id=' + str(website_id)))
+            # user not fixed and browser fixed 
+            elif asweb.user_id == 0 and asweb.browser_id == browser_id:
+                db.delete('assigned_websites', where=('user_id=0 AND browser_id=' + str(browser_id)
+                                                + ' AND website_id=' + str(website_id)))
+            # user not fixed and browser fixed
+            elif asweb.user_id == 0 and asweb.browser_id == 0:
+                db.delete('assigned_websites', where=('user_id=0 AND browser_id=0 AND website_id=' + str(website_id))) 
+
 
     @staticmethod
     def add_browser(browser_info):
@@ -202,9 +253,45 @@ class compare:
 class assigned:
     def GET(self):
         browsers = db.query('SELECT * FROM browsers;').list()
-        websites = db.query('SELECT id, jahia, wordpress FROM websites;').list()
+        websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
         assigneds = db.query('SELECT * FROM assigned_websites;').list()
-        return render.assigned(assigneds, names, browsers, websites)
+        print(assigneds)
+        return render.assigned(assigneds, names, names_orderN, browsers, websites, '')
+
+    def POST(self):
+        message = ''
+        select_user = web.input(select = None).select_user
+        select_browser = web.input(select = None).select_browser
+        select_website = web.input(select = None).select_website
+        # Teste les valeurs
+        if (select_user == '-1'):
+            select_user = 'NULL'
+        
+        try:
+            db.query(('INSERT INTO assigned_websites VALUES (' 
+                        + str(select_user) + ',' 
+                        + str(select_browser) + ','
+                        + str(select_website) + ')'))
+        except sqlite3.IntegrityError as e:
+            print (e)
+            message = "L'entrée est déjà existante"
+            
+
+        browsers = db.query('SELECT * FROM browsers;').list()
+        websites = db.query('SELECT id, name, jahia, wordpress FROM websites;').list()
+        assigneds = db.query('SELECT * FROM assigned_websites;').list()
+        return render.assigned(assigneds, names, names_orderN, browsers, websites, message)
+
+class delete:
+    def POST(self):
+        values = web.input().keys()[0]
+        values = values.split(',')
+        db.delete('assigned_websites', where=('user_id=' + values[0] 
+                                                + ' AND browser_id=' + values[1] 
+                                                + ' AND website_id=' + values[2]))
+        print(values)
+        print('Hellllllo')
+        raise web.seeother('/assigned')
 
 class stats:
     def GET(self):
@@ -221,11 +308,13 @@ class next:
             url = web.input(url1=None).url1
             user_id = web.input(user_id=None).user_id
             if user_id != '0':
+                user_id = int(user_id)
+                browser_id = int(browser_id)
                 website_id = query.get_id_from_jahia_url(url)
-                query.update_assigned_websites(website_id, browser_id)
+                query.update_assigned_websites(user_id, browser_id, website_id)
                 query.add_log(user_id, browser_id, website_id, statu)
                 add_log_to_csv(user_id, browser_id, website_id, statu)
-                raise web.seeother('/compare?user_id=' + user_id)
+                raise web.seeother('/compare?user_id=' + str(user_id))
             else:
                 raise web.seeother('/')
 
